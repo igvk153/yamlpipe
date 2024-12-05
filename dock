@@ -3,7 +3,7 @@ name: CI Pipeline
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   # Stage 1: Build the application
