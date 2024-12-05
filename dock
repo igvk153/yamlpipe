@@ -3,12 +3,12 @@ name: CI Pipeline
 on:
   push:
     branches:
-      - develop
+      - main
 
 jobs:
+  # Stage 1: Build the application
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -21,11 +21,32 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run tests
-        run: npm test
-
       - name: Build project
         run: npm run build
 
-      - name: Deploy (example step)
+  # Stage 2: Run tests (depends on the 'build' job)
+  test:
+    runs-on: ubuntu-latest
+    needs: build  # This job depends on the 'build' job completing first
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Run tests
+        run: npm test
+
+  # Stage 3: Deploy (depends on the 'test' job)
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test  # This job depends on the 'test' job completing first
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy application
         run: echo "Deploying your project!"
